@@ -1,0 +1,55 @@
+# git submodules are NOT allowed in GO monorepo
+*.gitmodules
+
+.analysis
+/pkg/**
+/build
+/dist
+.idea
+.itea
+.ijwb
+**/docs/_build/*
+
+# see https://github.com/github/gitignore/blob/master/Global/Vim.gitignore
+[._]*.sw[a-p]
+Session.vim
+Sessionx.vim
+
+# Python virtual env file
+.python-version
+
+vendor/
+*.DS_Store
+.vscode
+/bazel-*
+!/bazel-README.md
+
+# Ignore Emacs backup file
+*~
+
+# For vim users using ctags.
+/tags
+
+# File created by onboard tool
+/onboard.yaml
+
+# Used for setting custom bazel options during CI builds,
+# see tools/ci/build-steps/go_code_bazel_custom_options
+/.ci.bazelrc
+
+# .envrc.local, if it exists, is per-user.
+.envrc.local
+# Ignore ITEA workspace files
+.itea/
+.phutil_module_cache
+
+# Ignore lessman files
+.lessman_cache/
+lessman-dockerman.log
+
+# Ignore Phab comment
+.phabricator-comment
+
+# Python cache
+*.pyc
+__pycache__/
