@@ -10,99 +10,122 @@ import (
 	"strings"
 )
 
-func Read2DIntArray(filename string) (int, [][]int) {
+func readLines(filename string, numOfLines int, funcName ...string) []string {
+	var methodName string
+	if len(funcName) > 0 {
+		for _, name := range funcName {
+			name = strings.TrimSpace(name)
+			if name != "" {
+				methodName = name
+				break
+			}
+		}
+	}
+
+	if methodName == "" {
+		methodName = "readLines"
+	}
+
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "fixtures %s: %v\n", methodName, err)
+		return nil
+	}
+
+	lines := strings.Split(string(data), "\n")
+	for i := 0; i < len(lines); i++ {
+		line := strings.TrimSpace(lines[i])
+		if line == "" {
+			lines = append(lines[:i], lines[i+1:]...)
+			i--
+		}
+	}
+
+	if len(lines) < numOfLines {
+		fmt.Fprintf(os.Stderr, "fixtures %s: %s should have at least %d non empty lines\n",
+			methodName, filename, numOfLines)
+		return nil
+	}
+
+	return lines
+}
+
+func readIntArray(str string) []int {
+	var array []int
+	regex := regexp.MustCompile(`(-?\d+,?)+`)
+	commaSeparated := regex.FindString(str)
+	items := strings.Split(commaSeparated, ",")
+	for _, digits := range items {
+		num, _ := strconv.Atoi(digits)
+		array = append(array, num)
+	}
+	return array
+}
+
+func read2DIntArray(line string) [][]int {
+	var array [][]int
+	regex := regexp.MustCompile(`\[(-?\d+,?)+]`)
+	intArrays := regex.FindAllString(line, -1)
+	for _, intArrayStr := range intArrays {
+		array = append(array, readIntArray(intArrayStr))
+	}
+	return array
+}
+
+func createTree(input []int) *trees.TreeNode {
+	var root *trees.TreeNode
+	queue := []**trees.TreeNode{&root}
+
+	for _, item := range input {
+		node := new(trees.TreeNode)
+		node.Val = item
+		*(queue[0]) = node
+		queue = append(queue, &node.Left, &node.Right)
+		queue = queue[1:]
+	}
+	return root
+}
+
+func readWord(line string) string {
+	regex := regexp.MustCompile(`\w+`)
+	str := regex.FindString(line)
+	return str
+}
+
+func ReadCriticalConnectionsTest(filename string) (int, [][]int) {
 	var count int
 	var array [][]int
 
-	data, err := ioutil.ReadFile(filename)
+	lines := readLines(filename, 2, "ReadCriticalConnectionsTest")
+
+	count, err := strconv.Atoi(lines[0])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "fixtures Read2DIntArray: %v\n", err)
-		return 0, nil
+		fmt.Fprintf(os.Stderr, "fixtures ReadCriticalConnectionsTest: first Line should be an int %v\n", err)
 	}
-
-	lines := strings.Split(string(data), "\n")
-	if len(lines) < 2 {
-		fmt.Fprintf(os.Stderr, "fixtures Read2DIntArray: %s should have at least 2 lines\n", filename)
-		return 0, nil
-	}
-
-	firstLine := len(lines)
-	for index, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-
-		if firstLine > index {
-			count, err = strconv.Atoi(line)
-			firstLine = index
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "fixtures Read2DIntArray: first Line should be an int %v\n", err)
-			}
-			continue
-		}
-
-		regex := regexp.MustCompile(`\d+,\d+`)
-		strPairs := regex.FindAllString(line, -1)
-		for _, strPair := range strPairs {
-			itemsStr := strings.Split(strPair, ",")
-			x, err := strconv.Atoi(itemsStr[0])
-			if err != nil {
-				continue
-			}
-
-			y, err := strconv.Atoi(itemsStr[1])
-			if err != nil {
-				continue
-			}
-
-			intPair := []int{x, y}
-			array = append(array, intPair)
-		}
-
-	}
-
+	array = read2DIntArray(lines[1])
 	return count, array
 }
 
-func ReadTree(filename string) *trees.TreeNode {
+func ReadInvertBinaryTreeTest(filename string) *trees.TreeNode {
+	lines := readLines(filename, 1, "ReadInvertBinaryTreeTest")
+	arrayNodes := readIntArray(lines[0])
+	return createTree(arrayNodes)
+}
 
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "fixtures ReadTree: %v\n", err)
-		return nil
-	}
+func ReadClosetPointOrigin(filename string) (points [][]int, K int) {
+	lines := readLines(filename, 2, "ReadClosetPointOrigin")
+	K, _ = strconv.Atoi(lines[1])
+	return read2DIntArray(lines[0]), K
+}
 
-	lines := strings.Split(string(data), "\n")
-	if len(lines) < 1 {
-		fmt.Fprintf(os.Stderr, "fixtures Read2DIntArray: %s should have at least 1 lines\n", filename)
-		return nil
-	}
+func ReadEditDistance(filename string) (word1 string, word2 string) {
+	lines := readLines(filename, 2, "ReadEditDistance")
+	word1 = readWord(lines[0])
+	word2 = readWord(lines[1])
+	return word1, word2
+}
 
-	var root *trees.TreeNode
-	var queue []**trees.TreeNode
-	queue = append(queue, &root)
-
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		regex := regexp.MustCompile(`\d+`)
-		allInts := regex.FindAllString(line, -1)
-		for _, strInt := range allInts {
-			x, err := strconv.Atoi(strInt)
-			if err != nil {
-				queue = queue[1:]
-				continue
-			}
-			node := new(trees.TreeNode)
-			node.Val = x
-			*queue[0] = node
-			queue = append(queue, &node.Left, &node.Right)
-			queue = queue[1:]
-		}
-	}
-
-	return root
+func ReadTwoCityScheduling(filename string) (costs [][]int) {
+	lines := readLines(filename, 1, "ReadTwoCityScheduling")
+	return read2DIntArray(lines[0])
 }

@@ -7,8 +7,7 @@ import (
 )
 
 func main() {
-	testFileName := "/Users/koowolab/gitroot/kay-owolabi/prep/src/leetcode/fixtures/invertbinarytree/test.in"
-	tree := fixtures.ReadTree(testFileName)
-	fmt.Printf("node.Val :%d\n", tree.Val)
-	solutions.InvertTree(tree)
+	testFileName := "/Users/koowolab/gitroot/kay-owolabi/prep/src/leetcode/fixtures/twocityscheduling/test1.in"
+	result := solutions.TwoCitySchedCost(fixtures.ReadTwoCityScheduling(testFileName))
+	fmt.Printf("%v\n", result)
 }
