@@ -8,10 +8,10 @@ const (
 	BLUE  Color = 2
 )
 
-func dutchFlagPartition(pivotIndex int, aPtr []Color) {
+//5.1
+func DutchFlagPartition(pivotIndex int, aPtr []Color) {
 	pivot := aPtr[pivotIndex]
-	length := len(aPtr)
-	for smaller, equal, larger := 0, 0, length-1; equal < larger; {
+	for smaller, equal, larger := 0, 0, len(aPtr); equal < larger; {
 		if aPtr[equal] < pivot {
 			aPtr[equal], aPtr[smaller] = aPtr[smaller], aPtr[equal]
 			smaller++
@@ -19,8 +19,8 @@ func dutchFlagPartition(pivotIndex int, aPtr []Color) {
 		} else if aPtr[equal] == pivot {
 			equal++
 		} else {
-			aPtr[equal], aPtr[larger] = aPtr[larger], aPtr[equal]
 			larger--
+			aPtr[equal], aPtr[larger] = aPtr[larger], aPtr[equal]
 		}
 	}
 }
@@ -62,4 +62,9 @@ func canReach(maxAdvanceSteps []int) bool {
 		steps = max(maxAdvanceSteps[i], steps)
 	}
 	return true
+}
+
+//5.6 Buy and Sell Stock Once
+func ComputeMaxProfit(prices []float64) float64 {
+	panic("implement me")
 }

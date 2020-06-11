@@ -9,6 +9,7 @@ func CountBits(x uint) uint16 {
 	return numBits
 }
 
+// 4.1 Compute the parity of a word
 func Parity(x uint64) uint16 {
 	x ^= x >> 32
 	x ^= x >> 16
