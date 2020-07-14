@@ -24,7 +24,7 @@ func TestIntToString(t *testing.T) {
 		var x int
 		var s string
 		json.Unmarshal([]byte(datum[0]), &x)
-		json.Unmarshal([]byte(datum[0]), &s)
+		json.Unmarshal([]byte(datum[1]), &s)
 
 		tests = append(tests, test{
 			name: strconv.Itoa(i),

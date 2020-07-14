@@ -1,5 +1,7 @@
 package arrays
 
+import "math"
+
 type Color int
 
 const (
@@ -66,5 +68,16 @@ func canReach(maxAdvanceSteps []int) bool {
 
 //5.6 Buy and Sell Stock Once
 func ComputeMaxProfit(prices []float64) float64 {
-	panic("implement me")
+	maxProfit, minSoFar := 0, math.MaxInt64
+	for _, price := range prices {
+		price := int(price * 1000)
+		if minSoFar > price {
+			minSoFar = price
+		} else if maxProfit < price-minSoFar {
+			maxProfit = price - minSoFar
+		}
+	}
+	x := float64(maxProfit) / 1000
+	//res := math.Round(x/0.05) * 0.05
+	return x
 }
