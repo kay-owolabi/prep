@@ -62,3 +62,44 @@ func splitTsvFile(tsvfile string) [][]string {
 	}
 	return result
 }
+
+type Compare interface {
+	Len() int
+	Compare(i, j int, other interface{}) int
+}
+
+type StringSlice []string
+
+func (s StringSlice) Len() int { return len(s) }
+
+func (s StringSlice) Compare(i, j int, other interface{}) int {
+	return strings.Compare(s[i], other.(StringSlice)[j])
+}
+
+type IntSlice []int
+
+func (I IntSlice) Len() int { return len(I) }
+
+func (I IntSlice) Compare(i, j int, other interface{}) int {
+	return (I[i] - other.(IntSlice)[j]) / 1
+}
+
+func LexicographyComp(l1, l2 Compare) bool {
+	var result int
+	for ok, i, j := true, 0, 0; ok; i, j, ok = i+1, j+1, result == 0 {
+		if i >= l1.Len() {
+			if j >= l2.Len() {
+				return false
+			} else {
+				return true
+			}
+		}
+		if j >= l2.Len() {
+			return false
+		}
+		result = l1.Compare(i, j, l2)
+	}
+	return result < 0
+}
+
+const FailureInfo = "Failure info\n" + "\texpected: %v\n" + "\tgot: %v\n"
